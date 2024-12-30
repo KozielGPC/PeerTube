@@ -87,7 +87,7 @@ export class VideoPremiereComponent {
 
         this.remainingTime = `${years > 0 ? years + "y " : ""}${
           days > 0 ? days + "d " : ""
-        }${hours}h ${minutes}m ${seconds}s remaining`;
+        }${hours}h ${minutes}m ${seconds}s`;
       }
     });
   }
