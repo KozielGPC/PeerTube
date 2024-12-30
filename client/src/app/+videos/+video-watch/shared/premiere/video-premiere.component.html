@@ -28,12 +28,14 @@
 
 
 <div class="premiere-container">
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMa-NOvcikSzUOadgrF5EMnfb4jKgJchRUVg&s" alt="Video Thumbnail" class="video-thumbnail" />
+  <img [src]="video?.thumbnailUrl" alt="Video Thumbnail" class="video-thumbnail" />
   <div class="premiere-info">
-    <div class="premiere-text">
-      <p>Premieres in 60 seconds</p>
-      <p>6 June, 11:00</p>
+    <div class="premiere-text" *ngIf="video?.scheduledUpdate?.updateAt">
+      
+      <p>Premieres in {{ remainingTime }}</p>
     </div>
-    <button class="notify-button">Set reminder</button>
+    <button class="notify-button"
+    (click)="addNotification()"
+    >Set reminder</button>
   </div>
 </div>

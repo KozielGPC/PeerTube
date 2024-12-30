@@ -6,6 +6,7 @@ import { NgbTooltip } from "@ng-bootstrap/ng-bootstrap";
 import { NgIf, NgClass, NgFor } from "@angular/common";
 import { VideoDetails } from "@app/shared/shared-main/video/video-details.model";
 import { PTDatePipe } from "@app/shared/shared-main/common/date.pipe";
+import { interval, Subscription } from "rxjs";
 
 @Component({
   selector: "my-video-premiere",
@@ -33,6 +34,9 @@ export class VideoPremiereComponent {
   notificationAdded = false;
   currentPremierePosition: number;
 
+  remainingTime: string = "";
+  private countdownSubscription!: Subscription;
+
   // constructor(
   //   private hooks: HooksService,
   //   private userService: UserService,
@@ -45,8 +49,46 @@ export class VideoPremiereComponent {
 
   // }
 
+  ngOnInit(): void {
+    this.startCountdown();
+  }
+
+  ngOnDestroy(): void {
+    this.countdownSubscription?.unsubscribe();
+  }
+
   addNotification() {
     // this.notifier.notify("warning", message);
     console.log("addNotification");
+    console.log(this.video);
+  }
+
+  startCountdown(): void {
+    this.countdownSubscription = interval(1000).subscribe(() => {
+      const now = new Date().getTime();
+      const premiereTime = new Date(
+        this.video.scheduledUpdate.updateAt
+      ).getTime();
+      const diff = premiereTime - now;
+
+      if (diff <= 0) {
+        this.remainingTime = "Premiere has started!";
+        this.countdownSubscription.unsubscribe();
+      } else {
+        const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+        const days = Math.floor(
+          (diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24)
+        );
+        const hours = Math.floor(
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        this.remainingTime = `${years > 0 ? years + "y " : ""}${
+          days > 0 ? days + "d " : ""
+        }${hours}h ${minutes}m ${seconds}s remaining`;
+      }
+    });
   }
 }
